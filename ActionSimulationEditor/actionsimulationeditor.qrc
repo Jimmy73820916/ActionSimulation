@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>image/append.svg</file>
+        <file>image/btn.svg</file>
+        <file>image/category.svg</file>
+        <file>image/collapse.svg</file>
+        <file>image/down.svg</file>
+        <file>image/expand.svg</file>
+        <file>image/export.svg</file>
+        <file>image/import.svg</file>
+        <file>image/inputdevice.svg</file>
+        <file>image/keyboard.svg</file>
+        <file>image/newproject.svg</file>
+        <file>image/openproject.svg</file>
+        <file>image/outputdevice.svg</file>
+        <file>image/refresh.svg</file>
+        <file>image/remove.svg</file>
+        <file>image/rename.svg</file>
+        <file>image/save.svg</file>
+        <file>image/script.svg</file>
+        <file>image/switch.svg</file>
+        <file>image/up.svg</file>
+        <file>image/internaldevice.svg</file>
+        <file>image/teammaster.svg</file>
+        <file>image/teamslave.svg</file>
+        <file>image/masterset.svg</file>
+        <file>image/open.svg</file>
+    </qresource>
+</RCC>
