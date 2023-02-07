@@ -1,0 +1,24 @@
+{
+  "service":
+  {
+    "name":"ActionSimulationServer",
+    "description":"ActionSimulationServer"
+  },
+
+  "projects": 
+  {
+    "project_name": "D:\\ActionSimulation\\Projects\\Demo\\Demo.json"
+  },
+
+  "listen":
+  {
+    "address":"0.0.0.0",
+		"port":12358
+	},
+
+  "miscellaneous":
+  {
+    "logretaindays": 15,
+    "loglevel": 0
+  }
+}

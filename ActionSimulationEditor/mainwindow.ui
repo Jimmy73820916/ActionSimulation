@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ActionSimulationEditor</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_P">
+    <property name="title">
+     <string>项目(&amp;P)</string>
+    </property>
+    <addaction name="actionCreateProject"/>
+    <addaction name="actionOpenProject"/>
+    <addaction name="actionSaveProject"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menu_W">
+    <property name="title">
+     <string>窗口(&amp;W)</string>
+    </property>
+   </widget>
+   <addaction name="menu_P"/>
+   <addaction name="menu_W"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="separator"/>
+   <addaction name="actionCreateProject"/>
+   <addaction name="actionOpenProject"/>
+   <addaction name="actionSaveProject"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionCreateProject">
+   <property name="icon">
+    <iconset resource="actionsimulationeditor.qrc">
+     <normaloff>:/image/image/newproject.svg</normaloff>:/image/image/newproject.svg</iconset>
+   </property>
+   <property name="text">
+    <string>新建项目</string>
+   </property>
+   <property name="toolTip">
+    <string>创建新项目</string>
+   </property>
+  </action>
+  <action name="actionOpenProject">
+   <property name="icon">
+    <iconset resource="actionsimulationeditor.qrc">
+     <normaloff>:/image/image/openproject.svg</normaloff>:/image/image/openproject.svg</iconset>
+   </property>
+   <property name="text">
+    <string>打开项目</string>
+   </property>
+   <property name="toolTip">
+    <string>打开已有项目</string>
+   </property>
+  </action>
+  <action name="actionSaveProject">
+   <property name="icon">
+    <iconset resource="actionsimulationeditor.qrc">
+     <normaloff>:/image/image/save.svg</normaloff>:/image/image/save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>保存项目</string>
+   </property>
+   <property name="toolTip">
+    <string>保存当前项目</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>退出</string>
+   </property>
+   <property name="toolTip">
+    <string>退出应用程序</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="actionsimulationeditor.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

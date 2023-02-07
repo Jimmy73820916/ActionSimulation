@@ -1,0 +1,371 @@
+{
+    "categories": {
+        "Demo": [
+            "Test"
+        ],
+        "_root": "Demo"
+    },
+    "components": {
+        "CacheTestOutput": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 2,
+            "default_value": 0,
+            "description": "",
+            "name": "缓存测试输出",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "subscription": [
+                "CacheTest_logic"
+            ]
+        },
+        "CacheTestSwitch": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 1,
+            "default_value": 0,
+            "description": "",
+            "name": "缓存测试开关",
+            "set_action_keep": 0,
+            "subscription": [
+            ]
+        },
+        "CacheTest_logic": {
+            "behavior_type": 0,
+            "category": "Test",
+            "component_type": 0,
+            "default_value": 0,
+            "description": "",
+            "name": "缓存测试逻辑",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "role": "CacheTest_logic",
+            "subscription": [
+                "CacheTestSwitch",
+                "Power"
+            ]
+        },
+        "FaultTestOutput": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 2,
+            "default_value": 0,
+            "description": "",
+            "name": "故障测试输出",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "subscription": [
+                "FaultTest_logic"
+            ]
+        },
+        "FaultTestSwitch": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 1,
+            "default_value": 0,
+            "description": "",
+            "name": "故障测试开关",
+            "set_action_keep": 0,
+            "subscription": [
+            ]
+        },
+        "FaultTest_logic": {
+            "behavior_type": 0,
+            "category": "Test",
+            "component_type": 0,
+            "default_value": 0,
+            "description": "",
+            "name": "故障测试逻辑",
+            "reference": [
+            ],
+            "respond_boardcast": [
+                "fault1"
+            ],
+            "role": "FaultTest_logic",
+            "subscription": [
+                "FaultTestSwitch",
+                "Power"
+            ]
+        },
+        "LoopTestOutput": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 2,
+            "default_value": 0,
+            "description": "",
+            "name": "循环测试输出",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "subscription": [
+                "LoopTest_logic"
+            ]
+        },
+        "LoopTestSwitch": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 1,
+            "default_value": 0,
+            "description": "",
+            "name": "循环测试开关",
+            "set_action_keep": 0,
+            "subscription": [
+            ]
+        },
+        "LoopTest_logic": {
+            "behavior_type": 0,
+            "category": "Test",
+            "component_type": 0,
+            "default_value": 0,
+            "description": "",
+            "name": "循环测试逻辑",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "role": "LoopTest_logic",
+            "subscription": [
+                "LoopTestSwitch",
+                "Power"
+            ]
+        },
+        "OrderTestOutput": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 2,
+            "default_value": 0,
+            "description": "",
+            "name": "顺序测试输出",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "subscription": [
+                "OrderTest_logic"
+            ]
+        },
+        "OrderTestSwitch": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 1,
+            "default_value": 0,
+            "description": "",
+            "name": "顺序测试开关",
+            "set_action_keep": 0,
+            "subscription": [
+            ]
+        },
+        "OrderTest_logic": {
+            "behavior_type": 0,
+            "category": "Test",
+            "component_type": 0,
+            "default_value": 0,
+            "description": "",
+            "name": "顺序测试逻辑",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "role": "OrderTest_logic",
+            "subscription": [
+                "OrderTestSwitch",
+                "Power"
+            ]
+        },
+        "Power": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 1,
+            "default_value": 0,
+            "description": "",
+            "name": "电源开关",
+            "set_action_keep": 0,
+            "subscription": [
+            ]
+        },
+        "TeamSlaveBool": {
+            "behavior_type": 4,
+            "category": "Test",
+            "component_type": 4,
+            "default_value": false,
+            "description": "",
+            "name": "从设备1",
+            "team": "TeamTest"
+        },
+        "TeamSlaveBoolOutput": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 2,
+            "default_value": false,
+            "description": "",
+            "name": "从设备1输出",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "subscription": [
+                "TeamSlaveBool"
+            ]
+        },
+        "TeamSlaveNumber": {
+            "behavior_type": 4,
+            "category": "Test",
+            "component_type": 4,
+            "default_value": 0,
+            "description": "",
+            "name": "从设备2",
+            "team": "TeamTest"
+        },
+        "TeamSlaveNumberOutput": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 2,
+            "default_value": false,
+            "description": "",
+            "name": "从设备2输出",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "subscription": [
+                "TeamSlaveNumber"
+            ]
+        },
+        "TeamSlaveObject": {
+            "behavior_type": 4,
+            "category": "Test",
+            "component_type": 4,
+            "default_value": {
+            },
+            "description": "",
+            "name": "从设备4",
+            "team": "TeamTest"
+        },
+        "TeamSlaveObjectOutput": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 2,
+            "default_value": {
+            },
+            "description": "",
+            "name": "从设备4输出",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "subscription": [
+                "TeamSlaveObject"
+            ]
+        },
+        "TeamSlaveString": {
+            "behavior_type": 4,
+            "category": "Test",
+            "component_type": 4,
+            "default_value": "",
+            "description": "",
+            "name": "从设备3",
+            "team": "TeamTest"
+        },
+        "TeamSlaveStringOutput": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 2,
+            "default_value": "",
+            "description": "",
+            "name": "从设备3输出",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "subscription": [
+                "TeamSlaveString"
+            ]
+        },
+        "TeamTest": {
+            "behavior_type": 0,
+            "category": "Test",
+            "component_type": 3,
+            "default_value": 0,
+            "description": "",
+            "name": "设备组(主)",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "role": "TeamTest_logic",
+            "subscription": [
+                "Power",
+                "TeamTestSwitch"
+            ],
+            "team": "TeamTest"
+        },
+        "TeamTestSwitch": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 1,
+            "default_value": 0,
+            "description": "",
+            "name": "设备组测试开关",
+            "set_action_keep": 0,
+            "subscription": [
+            ]
+        },
+        "TimerTestOutput": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 2,
+            "default_value": 0,
+            "description": "",
+            "name": "计时器测试输出",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "subscription": [
+                "TimerTest_logic"
+            ]
+        },
+        "TimerTestSwitch": {
+            "behavior_type": 1,
+            "category": "Test",
+            "component_type": 1,
+            "default_value": 0,
+            "description": "",
+            "name": "计时器测试开关",
+            "set_action_keep": 0,
+            "subscription": [
+            ]
+        },
+        "TimerTest_logic": {
+            "behavior_type": 0,
+            "category": "Test",
+            "component_type": 0,
+            "default_value": 0,
+            "description": "",
+            "name": "计时器测试逻辑",
+            "reference": [
+            ],
+            "respond_boardcast": [
+            ],
+            "role": "TimerTest_logic",
+            "subscription": [
+                "TimerTestSwitch",
+                "Power"
+            ]
+        }
+    },
+    "project": {
+        "default_timer_interval": 500,
+        "min_timer_interval": 100,
+        "project_type": "multi_users"
+    },
+    "relation": {
+    }
+}
