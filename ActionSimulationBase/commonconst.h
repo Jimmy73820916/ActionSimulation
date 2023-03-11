@@ -140,7 +140,7 @@ const char* const OrderEvent = "_Order";
 const char* const single_user = "single_user";
 const char* const multi_users = "multi_users";
 const char* const ValueKey = "_value";
-const char* const CalculateDefaultValue = "_calculate_default_value";
+const char* const CalculateDefaultValue = "_calculate";
 }
 
 }

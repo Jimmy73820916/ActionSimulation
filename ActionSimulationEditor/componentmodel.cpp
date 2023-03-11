@@ -333,9 +333,9 @@ Jimmy::DesignComponent* ComponentModel::getComponent(const QString& cid) const
     return *itor;
 }
 
-const QVector<Jimmy::DesignComponent*>& ComponentModel::getAllComponents() const
+const QVector<Jimmy::DesignComponent*>& ComponentModel::getAllComponents(bool showOnly) const
 {
-    return ComponentsWhole_;
+    return showOnly ? componentsShowed_:ComponentsWhole_;
 }
 
 bool ComponentModel::verifyComponent(const QString& cid,const Jimmy::DesignComponent& component,bool isAppend)
@@ -739,5 +739,21 @@ void ComponentModel::setFilter_()
     endResetModel();
 }
 
+QStringList ComponentModel::rescanCategory()
+{
+    QStringList li;
+    Q_FOREACH(auto item,ComponentsWhole_)
+    {
+        if(!item->getCategory().isEmpty())
+        {
+            if(li.contains(item->getCategory()))
+            {
+                continue;
+            }
+            li.push_back(item->getCategory());
+        }
+    }
 
+    return li;
+}
 

@@ -45,6 +45,7 @@ const char* const ProjectManager::Result = "result";
 const char* const ProjectManager::Reason = "reason";
 
 ProjectManager::ProjectManager()
+    :isRun_(true)
 {
     initializesDispatcher();
     commandTCPDataThread_ = std::thread(std::bind(&ProjectManager::commandTcpDataThread, this));
@@ -351,6 +352,7 @@ void ProjectManager::run()
     {
         projectStatus_ = ProjectStatus::prepare;
         projectStatus_ = (runProject_() == ErrorCode::ec_ok)?ProjectStatus::running:ProjectStatus::stopped;
+        LOGINFO(QStringLiteral("[%1:%2] run project %3").arg(__FUNCTION__).arg(__LINE__).arg((projectStatus_ == ProjectStatus::running)?"succeed":"failed"));
     }
 }
 

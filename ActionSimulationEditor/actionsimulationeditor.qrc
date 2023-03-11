@@ -25,5 +25,7 @@
         <file>image/teamslave.svg</file>
         <file>image/masterset.svg</file>
         <file>image/open.svg</file>
+        <file>image/relation.svg</file>
+        <file>image/modify.svg</file>
     </qresource>
 </RCC>

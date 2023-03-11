@@ -44,13 +44,13 @@ public:
     void stop() override;
 
     ComponentType getType() const override {  return ComponentType::Input; }
-    BehaviorType getBehavior() const { return behaviorType_; }
+    BehaviorType getBehavior() const override { return behaviorType_; }
 
     ErrorCode load(const QString& id,const QJsonObject& jo) override;
 
     QJsonValue getValue(User userid) override;
     void setValue(Connection connection,const QJsonValue& value) override;
-    void onTime(User userid,size_t counter) override;
+    void onTime(User userid,size_t counter, size_t interval) override;
     void onAction(User userid,const QString& trigger,const QJsonValue& value) override;
     void onBoardcast(User /*userid*/) override {};
     void onLoop(User /*userid*/,const QJsonValue& /*value*/) override {};

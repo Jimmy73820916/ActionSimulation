@@ -252,14 +252,14 @@ ErrorCode NormalComponent::onInitialize_()
 	auto results = actionScript_->onInitialize(collectInputs());
 	if (!results)
 	{
-        ErrorCode::ec_error;
+        return ErrorCode::ec_error;
 	}
 
     auto result = results.value();
 
 	if (result.empty()|| (!result.contains("_value")))
 	{
-        ErrorCode::ec_error;
+        return ErrorCode::ec_error;
 	}
 
     setDefaultValue(result.value("_value"));
@@ -281,10 +281,8 @@ void NormalComponent::onAction(User userid,const QString& trigger,const QJsonVal
         if(!value.isBool())
         {
             LOGERROR(QStringLiteral("[%1:%2] component:{%3} is only received bool value. now received [%4]")
-                .arg(__FUNCTION__)
-                .arg(__LINE__)
-                .arg(getID())
-                .arg(value.toString()));
+                .arg(__FUNCTION__,__LINE__)
+                .arg(getID(),value.toString()));
 
             return;
         }
@@ -321,7 +319,7 @@ void NormalComponent::onAction(User userid,const QString& trigger,const QJsonVal
     }
 }
 
-void NormalComponent::onTime(User userid,size_t counter)
+void NormalComponent::onTime(User userid,size_t counter,size_t interval)
 {
     if(!actionScript_)
     {
@@ -332,7 +330,7 @@ void NormalComponent::onTime(User userid,size_t counter)
 
         return;
     }
-    auto results = actionScript_->onTime(collectInputs(userid,counter));
+    auto results = actionScript_->onTime(collectInputs(userid,counter,interval));
     if(!results)
     {
         return;
@@ -359,10 +357,8 @@ QJsonObject NormalComponent::collectInputs()
 		if (!pComponent)
 		{
 			LOGFATAL(QStringLiteral("[%1:%2] component:{%3} subscription {%4} is not exist")
-				.arg(__FUNCTION__)
-				.arg(__LINE__)
-				.arg(getID())
-				.arg(item));
+                     .arg(__FUNCTION__,__LINE__)
+                     .arg(getID(),item));
 
 			return QJsonObject();
 		}
@@ -373,7 +369,7 @@ QJsonObject NormalComponent::collectInputs()
 	return jo;
 }
 
-QJsonObject NormalComponent::collectInputs(User userid,size_t counter)
+QJsonObject NormalComponent::collectInputs(User userid,size_t counter, size_t interval)
 {
     QJsonObject jo;
 
@@ -396,6 +392,7 @@ QJsonObject NormalComponent::collectInputs(User userid,size_t counter)
             jo.insert("_cache", QJsonValue());
         }
         jo.insert("_counter", static_cast<qint64>(counter));
+        jo.insert("_interval", static_cast<qint64>(interval));
     }
 
     getRelationParams(userid,"",jo);
@@ -465,10 +462,8 @@ void NormalComponent::getRelationParams(User userid,const QString& trigger,QJson
         if (!pComponent)
         {
             LOGFATAL(QStringLiteral("[%1:%2] component:{%3} subscription {%4} is not exist")
-                .arg(__FUNCTION__)
-                .arg(__LINE__)
-                .arg(getID())
-                .arg(item));
+                .arg(__FUNCTION__,__LINE__)
+                .arg(getID(),item));
 
             return;
         }
@@ -642,7 +637,7 @@ void NormalComponent::analysisOrder(User userid,const QJsonObject& jo)
         ((ot.loopValue[2].toDouble() < 0) && (ot.loopValue[0].toDouble() >= ot.loopValue[1].toDouble())))
     {
         //保证至少循环一次
-        gActionSimulationServer.getProjectManager()->appendScheduledTask(move(ot));
+        gActionSimulationServer.getProjectManager()->appendScheduledTask(std::move(ot));
     }
 }
 

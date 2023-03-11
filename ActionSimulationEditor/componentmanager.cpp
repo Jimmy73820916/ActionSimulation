@@ -266,9 +266,9 @@ DesignComponent* ComponentManager::getComponent(const QString& componentName)
     return static_cast<ComponentModel*>(componentList_->model())->getComponent(componentName);
 }
 
-const QVector<DesignComponent*>& ComponentManager::getAllComponents() const
+const QVector<DesignComponent*>& ComponentManager::getAllComponents(bool showOnly) const
 {
-    return static_cast<ComponentModel*>(componentList_->model())->getAllComponents();
+    return static_cast<ComponentModel*>(componentList_->model())->getAllComponents(showOnly);
 }
 
 QStringList ComponentManager::getAllCID()
@@ -284,6 +284,11 @@ QStringList ComponentManager::getAllTeams()
 QStringList ComponentManager::getAllRoles()
 {
     return static_cast<ComponentModel*>(componentList_->model())->getAllRoles();
+}
+
+QStringList ComponentManager::rescanCategory()
+{
+    return static_cast<ComponentModel*>(componentList_->model())->rescanCategory();
 }
 
 void ComponentManager::importFromExcel()

@@ -644,6 +644,7 @@ QModelIndex CategoryModel::appendCategory(const QModelIndex& ind)
     parentItem->appendChild(item);
     endInsertRows();
 
+    g_MainWindow_->setProjectStatus(ProjectStatus::modified);
     return index(item);
 }
 
@@ -662,6 +663,8 @@ void CategoryModel::appendCategory(const QString& category)
     CategoryItem* item = new CategoryItem(QStringLiteral("%1").arg(category),project_);
     project_->appendChild(item);
     endInsertRows();
+
+    g_MainWindow_->setProjectStatus(ProjectStatus::modified);
 }
 
 void CategoryModel::eraseCategory(const QModelIndex &ind)
@@ -800,6 +803,8 @@ void CategoryModel::appendMissing(const QStringList& categories)
             beginInsertRows(index(project_), order, order);
             project_->appendChild(new CategoryItem(item,project_));
             endInsertRows();
+
+            g_MainWindow_->setProjectStatus(ProjectStatus::modified);
         }
     }
 }
@@ -864,6 +869,8 @@ bool CategoryModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         beginMoveRows(sourceParent, sourceIndex, 1, parent, parentNode->childCount());
         endMoveRows();
     }
+
+    g_MainWindow_->setProjectStatus(ProjectStatus::modified);
 
     return true ;
 }

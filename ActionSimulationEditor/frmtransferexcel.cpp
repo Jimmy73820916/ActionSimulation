@@ -250,7 +250,7 @@ void FrmTransferExcel::exportData()
 {
     Document xlsx;
 
-    auto components = g_MainWindow_->getAllComponents();
+    auto components = g_MainWindow_->getAllComponents(true);
 
     ui->progressBar->setMinimum(0);
     ui->progressBar->setMaximum(components.size());

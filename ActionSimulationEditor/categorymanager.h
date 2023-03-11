@@ -65,6 +65,7 @@ public slots:
     void collapseAll();
     void actionUp();
     void actionDown();
+    void actionRescan();
     void closeCategoryTreeEditor();
 private:
     QStringList recentSelected_;
@@ -76,5 +77,7 @@ private:
     QAction* collapseAll_;
     QAction* actionUp_;
     QAction* actionDown_;
+
+    QAction* actionRescan_;
 };
 

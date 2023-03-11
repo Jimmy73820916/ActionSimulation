@@ -28,7 +28,7 @@ public:
     //仅用于调试
     void setValue(Connection connection,const QJsonValue& value) override;
 
-    void onTime(User /*userid*/,size_t /*counter*/) override {};
+    void onTime(User /*userid*/,size_t /*counter*/, size_t) override {};
     void onAction(User /*userid*/,const QString& /*trigger*/,const QJsonValue& /*value*/) override {};
     void onBoardcast(User /*userid*/) override {};
     void onLoop(User /*userid*/,const QJsonValue& /*value*/) override {};

@@ -186,9 +186,10 @@ void InputComponent::setValue(Connection connection,const QJsonValue& value)
     gActionSimulationServer.getProjectManager()->notifyComponentChange(userInfo->userId,getID(),value);
 }
 
-void InputComponent::onTime(User userid,size_t counter)
+void InputComponent::onTime(User userid,size_t counter, size_t interval)
 {
     Q_UNUSED(counter)
+    Q_UNUSED(interval)
 
     lock_guard<shared_mutex> lg(lockValue_);
     auto userVal = getUserValue_(userid,false);

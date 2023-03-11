@@ -5,6 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++17
 
 include($$PWD/../ActionSimulationBase/actionsimulationbase.pri)
+include($$PWD/RelationViewer/relationviewer.pri)
 include($$PWD/advanceddockingsystem/ads.pri)
 include($$PWD/QXlsx/QXlsx.pri)
 
@@ -31,7 +32,10 @@ SOURCES += \
     frmcreateproject.cpp \
     frmtransferexcel.cpp \
     qautocompleteplaintextedit.cpp \
-    qtsmalltools.cpp
+    qtsmalltools.cpp \
+    relationmanager.cpp \
+    relationmodel.cpp \
+    relationviewer.cpp
 
 HEADERS += \
     categorydelegate.h \
@@ -46,7 +50,10 @@ HEADERS += \
     frmtransferexcel.h \
     mainwindow.h  \
     qautocompleteplaintextedit.h \
-    qtsmalltools.h
+    qtsmalltools.h \
+    relationmanager.h \
+    relationmodel.h \
+    relationviewer.h
 
 FORMS += \
     componentdialog.ui \
@@ -63,3 +70,5 @@ RC_ICONS = ActionSimulationEditor.ico
 
 RESOURCES += \
     actionsimulationeditor.qrc
+
+DISTFILES +=

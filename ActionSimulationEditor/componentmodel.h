@@ -82,7 +82,7 @@ public:
     Jimmy::DesignComponent* itemFromIndex(const QModelIndex &index) const;
 
     Jimmy::DesignComponent* getComponent(const QString& id) const;
-    const QVector<Jimmy::DesignComponent*>& getAllComponents() const;
+    const QVector<Jimmy::DesignComponent*>& getAllComponents(bool showOnly) const;
 
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
@@ -102,7 +102,8 @@ public:
     QStringList getAllCID();
     QStringList getAllTeams();
     QStringList getAllRoles();
-
+	QStringList rescanCategory();
+	
     void clearComponents();
 
     void setFilter(const QStringList& filter);

@@ -77,6 +77,7 @@ CategoryManager::CategoryManager(QWidget *parent)
     collapseAll_ = new QAction(QStringLiteral("全部折叠"), this);
     actionUp_ = new QAction(QStringLiteral("上移"), this);
     actionDown_ = new QAction(QStringLiteral("下移"), this);
+    actionRescan_ = new QAction(QStringLiteral("重新扫描"), this);
 
     expandAll_->setIcon(QIcon(QTSmalltools::svgIcon(":/image/image/expand.svg")));
     collapseAll_->setIcon(QIcon(QTSmalltools::svgIcon(":/image/image/collapse.svg")));
@@ -84,10 +85,13 @@ CategoryManager::CategoryManager(QWidget *parent)
     actionUp_->setIcon(QIcon(QTSmalltools::svgIcon(":/image/image/up.svg")));
     actionDown_->setIcon(QIcon(QTSmalltools::svgIcon(":/image/image/down.svg")));
 
+    actionRescan_->setIcon(QIcon(QTSmalltools::svgIcon(":/image/image/refresh.svg")));
+
     connect(expandAll_, SIGNAL(triggered()),this, SLOT(expandAll()));
     connect(collapseAll_, SIGNAL(triggered()),this, SLOT(collapseAll()));
     connect(actionUp_, SIGNAL(triggered()),this, SLOT(actionUp()));
     connect(actionDown_, SIGNAL(triggered()),this, SLOT(actionDown()));
+    connect(actionRescan_, SIGNAL(triggered()),this, SLOT(actionRescan()));
 }
 
 void CategoryManager::setToolBar(QToolBar* toolBar)
@@ -97,6 +101,8 @@ void CategoryManager::setToolBar(QToolBar* toolBar)
     toolBar->addSeparator();
     toolBar->addAction(actionUp_);
     toolBar->addAction(actionDown_);
+    toolBar->addSeparator();
+    toolBar->addAction(actionRescan_);
 }
 
 void  CategoryManager::onSelectedCategoriesChanged(QModelIndex /*selected*/)
@@ -319,4 +325,22 @@ void CategoryManager::getAll(QStringList& categories)
 const CategoryItem* CategoryManager::getProject() const
 {
     return static_cast<CategoryModel*>(categoryTree_->model())->getProject();
+}
+
+void CategoryManager::actionRescan()
+{
+    auto existedComponentCategory = g_MainWindow_->rescanCategory();
+
+    QStringList categories;
+    getAll(categories);
+
+    foreach(auto item,existedComponentCategory)
+    {
+        if(categories.contains(item))
+        {
+            continue;
+        }
+
+        static_cast<CategoryModel*>(categoryTree_->model())->appendCategory(item);
+    }
 }

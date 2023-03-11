@@ -49,16 +49,10 @@ public:
     ~DataPackage();
 
     //组包成功调用函数
-    void registerMessageProcessFunction(std::function<void(size_t,const std::string&)> messageProcess)
-    {
-        messageProcess_ = messageProcess;
-	}
+    void registerMessageProcessFunction(std::function<void(size_t, const std::string&)> messageProcess);
 
     //黑名单调用函数
-	void registerblacklistFunction(std::function<void(size_t)> blackConnect)
-	{
-        blacklistFunc_ = blackConnect;
-	}
+    void registerblacklistFunction(std::function<void(size_t)> blackConnect);
 
     void pushData(size_t connectionId, const uint8_t* pData, size_t dataLength);
 private:

@@ -47,6 +47,12 @@ SOFTWARE.
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "categorymanager.h"
+#include "relationmanager.h"
+#include "relationmodel.h"
+#include "relationviewer.h"
+#include "relationviewer/nodestyle.h"
+#include "relationviewer/relationviewstyle.h"
+#include "relationviewer/connectionstyle.h"
 
 using namespace ads;
 using namespace std;
@@ -66,6 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
     setProjectStatus(ProjectStatus::invalid);
 
     createErrorInfoMessageBar();
+
+    loadConfigFile_();
 
     createDockingBar();
 
@@ -101,6 +109,7 @@ void MainWindow::registerSlotsFunctions()
 
     //dock
     connect(categoryManager_,SIGNAL(selectedCategoriesChanged(QStringList)), componentManager_,SLOT(selectedCategoriesChanged(QStringList)));
+    connect(relationManager_,SIGNAL(selectedRelationChanged(RelationItem*)), this,SLOT(selectedRelationChanged(RelationItem*)));
 }
 
 
@@ -201,11 +210,11 @@ Jimmy::DesignComponent* MainWindow::getComponent(const QString& componentName)
     return nullptr;
 }
 
-const QVector<Jimmy::DesignComponent*>& MainWindow::getAllComponents() const
+const QVector<Jimmy::DesignComponent*>& MainWindow::getAllComponents(bool showOnly) const
 {
     if (componentManager_)
     {
-        return componentManager_->getAllComponents();
+        return componentManager_->getAllComponents(showOnly);
     }
 
     static QVector<Jimmy::DesignComponent*> temp;
@@ -242,6 +251,16 @@ QStringList MainWindow::getAllRoles()
     return QStringList();
 }
 
+QStringList MainWindow::rescanCategory()
+{
+    if (componentManager_)
+    {
+        return componentManager_->rescanCategory();
+    }
+
+    return QStringList();
+}
+
 void MainWindow::createDockingBar()
 {
     CDockManager::setConfigFlag(CDockManager::FocusHighlighting, true);
@@ -256,6 +275,10 @@ void MainWindow::createDockingBar()
     auto categoryDockWidget = createCategoryManagerDockWidget();
     ui->menu_W->addAction(categoryDockWidget->toggleViewAction());
     DockManager_->addDockWidget(ads::LeftDockWidgetArea, categoryDockWidget);
+
+    auto relationDockWidget = createRelationManagerDockWidget();
+    ui->menu_W->addAction(relationDockWidget->toggleViewAction());
+    DockManager_->addDockWidget(ads::LeftDockWidgetArea, relationDockWidget);
 }
 
 ads::CDockWidget* MainWindow::createCategoryManagerDockWidget()
@@ -267,6 +290,33 @@ ads::CDockWidget* MainWindow::createCategoryManagerDockWidget()
     DockWidget->setFeature(ads::CDockWidget::DockWidgetDeleteOnClose, false);
     categoryManager_->setFocusPolicy(Qt::NoFocus);
     categoryManager_->setToolBar(DockWidget->createDefaultToolBar());
+
+    return DockWidget;
+}
+
+ads::CDockWidget* MainWindow::createRelationManagerDockWidget()
+{
+    relationManager_ = new RelationManager();
+    ads::CDockWidget* DockWidget = new ads::CDockWidget(QStringLiteral("订阅关系"));
+
+    DockWidget->setWidget(relationManager_);
+    DockWidget->setFeature(ads::CDockWidget::DockWidgetDeleteOnClose, false);
+    relationManager_->setFocusPolicy(Qt::NoFocus);
+    relationManager_->setToolBar(DockWidget->createDefaultToolBar());
+
+    return DockWidget;
+}
+
+ads::CDockWidget* MainWindow::createRelationViewerDockWidget(const RelationItem* item,const QJsonObject& jo)
+{
+    RelationViewer* relationViewer = new RelationViewer(item,jo);
+    ads::CDockWidget* DockWidget = new ads::CDockWidget(item->name);
+    DockWidget->setWidget(relationViewer);
+    DockWidget->setFeature(ads::CDockWidget::DockWidgetDeleteOnClose, true);
+    relationViewer->setFocusPolicy(Qt::NoFocus);
+    relationViewer->setToolBar(DockWidget->createDefaultToolBar());
+
+    connect(DockWidget, SIGNAL(closeRequested()),this,SLOT(onRelationViewerCloseRequested()));
 
     return DockWidget;
 }
@@ -298,6 +348,65 @@ void MainWindow::restoreLayout_()
     restoreState(Settings.value("mainWindow/State").toByteArray());
     DockManager_->restoreState(Settings.value("mainWindow/DockingState").toByteArray());
 }
+
+QString MainWindow::loadConfigFile_()
+{
+    QString configFile = qApp->applicationFilePath();
+    configFile.replace(configFile.length()-3,3,"json");
+
+    QFile file(configFile.toLocal8Bit());
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        return QStringLiteral("load %1 is failed").arg(configFile);
+    }
+
+    QJsonParseError error;
+    QJsonDocument jd = QJsonDocument::fromJson(file.readAll(),&error);
+
+    if(error.error!=QJsonParseError::NoError)
+    {
+        return QStringLiteral("%1 is not json file").arg(configFile);
+    }
+
+    QJsonObject jo = jd.object();
+
+    auto elemIter = jo.find("relation_style");
+    if ((elemIter == jo.end() || (!elemIter->isObject())))
+    {
+        return QStringLiteral("relationStyle key is invalid").arg(configFile);
+    }
+
+    auto elemRelationStyle = elemIter->toObject();
+    if (elemRelationStyle.contains("view_style") && elemRelationStyle["view_style"].isObject())
+    {
+        Jimmy::Relation::RelationViewStyle::getInstance()->setRelationViewStyle(elemRelationStyle["view_style"].toObject());
+    }
+    else
+    {
+        return QStringLiteral("ViewStyle key is invalid").arg(configFile);
+    }
+
+    if (elemRelationStyle.contains("connection_style") && elemRelationStyle["connection_style"].isObject())
+    {
+        Jimmy::Relation::ConnectionStyle::getInstance()->setConnectionStyle(elemRelationStyle["connection_style"].toObject());
+    }
+    else
+    {
+        return QStringLiteral("ConnectionStyle key is invalid").arg(configFile);
+    }
+
+    if (elemRelationStyle.contains("node_style") && elemRelationStyle["node_style"].isObject())
+    {
+        Jimmy::Relation::NodeStyle::getInstance()->setNodeStyle(elemRelationStyle["node_style"].toObject());
+    }
+    else
+    {
+        return QStringLiteral("NodeStyle key is invalid").arg(configFile);
+    }
+
+    return "";
+}
+
 
 void MainWindow::onActionCreateProject()
 {
@@ -373,8 +482,23 @@ Jimmy::ErrorCode MainWindow::openProject(const QString& fileFullPath)
     }
     QJsonObject jsonComponents = memItor->toObject();
 
+    memItor = docObj.find("relation");
+    if((memItor == docObj.end())||(!memItor->isObject()))
+    {
+        QMessageBox::critical(this,QStringLiteral("打开项目"),QStringLiteral("打开项目文件失败,relation 键不存在或无效"));
+        return ErrorCode::ec_error;
+    }
+    json_relation_ = memItor->toObject();
+
     categoryManager_->setCategories(jsonCategory);
     componentManager_->setComponents(jsonComponents);
+
+    auto val = json_relation_.value("_lists");
+    if(val.isArray())
+    {
+        relationManager_->setRelation(val.toArray());
+    }
+
 
     return ErrorCode::ec_ok;
 }
@@ -405,6 +529,8 @@ void MainWindow::onActionSaveProject()
     categories.insert("_root",fileInfo.baseName());
     jo.insert("categories", categories);
 
+    jo.insert("relation", relationManager_->getRelation());
+
     time_t now_time = time(nullptr);
     struct tm ctm;
     localtime_s(&ctm, &now_time);
@@ -433,4 +559,63 @@ void MainWindow::onActionSaveProject()
     file.close();
 
     setProjectStatus(ProjectStatus::editing);
+}
+
+void MainWindow::selectedRelationChanged(RelationItem* relationItem)
+{
+    if(relationItem == nullptr)
+    {
+        return;
+    }
+
+    ads::CDockWidget* widget = nullptr;
+    foreach(auto item,dockWidgets_)
+    {
+        if(static_cast<RelationViewer*>(item->widget())->getRID() == relationItem->RID)
+        {
+            widget = item;
+            break;
+        }
+    }
+
+    if(relationItem->checkStatus == Qt::Checked)
+    {
+        if(widget == nullptr)
+        {
+            QJsonObject jo;
+            QJsonValue jv = json_relation_.value(relationItem->name);
+            if(jv.isObject())
+            {
+                jo = jv.toObject();
+            }
+            auto relationDockWidget = createRelationViewerDockWidget(relationItem,jo);
+            dockWidgets_.push_back(relationDockWidget);
+            DockManager_->addDockWidgetFloating(relationDockWidget);
+        }
+        else
+        {
+            if(widget->windowTitle().compare(relationItem->name) != 0)
+            {
+                widget->setWindowTitle(relationItem->name);
+            }
+        }
+    }
+    else
+    {
+        if(widget)
+        {
+            widget->closeDockWidget();
+            dockWidgets_.removeOne(widget);
+        }
+    }
+}
+
+void MainWindow::onRelationViewerCloseRequested()
+{
+    auto DockWidget = qobject_cast<ads::CDockWidget*>(sender());
+    if(DockWidget)
+    {
+        dockWidgets_.removeOne(DockWidget);
+        relationManager_->uncheckRelation(static_cast<RelationViewer*>(DockWidget->widget())->getRID());
+    }
 }

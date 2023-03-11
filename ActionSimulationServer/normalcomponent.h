@@ -47,7 +47,7 @@ public:
     virtual ~NormalComponent() = default;
 
     ComponentType getType() const override {  return componentType_; }
-    BehaviorType getBehavior() const { return behaviorType_; }
+    BehaviorType getBehavior() const override { return behaviorType_; }
 
     ErrorCode start() override;
     void stop() override;
@@ -63,7 +63,7 @@ public:
     void onBoardcast(User userid) override;
     
     void onAction(User userid,const QString& trigger,const QJsonValue& value) override;
-    void onTime(User userid,size_t counter) override;
+    void onTime(User userid,size_t counter,size_t interval) override;
     void onLoop(User userid,const QJsonValue& value) override;
 
     void removeUser(User userid) override;
@@ -87,7 +87,7 @@ private:
     ErrorCode onInitialize_();
 
     QJsonObject collectInputs();
-    QJsonObject collectInputs(User userid,size_t counter);
+    QJsonObject collectInputs(User userid,size_t counter, size_t interval);
     QJsonObject collectInputs(User userid,const QString& trigger,const QJsonValue& value);
 
     void getRelationParams(User userid,const QString& trigger,QJsonObject& jo);

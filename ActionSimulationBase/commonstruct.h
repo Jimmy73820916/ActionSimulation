@@ -129,6 +129,7 @@ struct ComponentChangeEvent
     QString trigger;
     QJsonValue value;
     size_t counter{0};
+    size_t interval{ 0 };                             //millisecond
 };
 
 }

@@ -59,12 +59,13 @@ public:
     void renameCategory(const QString& source,const QString& desc);
 
     Jimmy::DesignComponent* getComponent(const QString& cid);
-    const QVector<Jimmy::DesignComponent*>& getAllComponents() const;
+    const QVector<Jimmy::DesignComponent*>& getAllComponents(bool showOnly) const;
 
     QStringList getAllCID();
     QStringList getAllTeams();
     QStringList getAllRoles();
-
+	QStringList rescanCategory();
+	
     bool hasComponents(const QString& category);
 signals:
     void errorMessage(QString);

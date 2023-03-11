@@ -251,13 +251,13 @@ ErrorCode TeamMasterComponent::onInitialize_()
 	auto results = actionScript_->onInitialize(collectInputs());
 	if (!results)
 	{
-		ErrorCode::ec_error;
+        return ErrorCode::ec_error;
 	}
 
 	auto result = results.value();
 	if (result.empty())
 	{
-		ErrorCode::ec_error;
+        return ErrorCode::ec_error;
 	}
 
 	foreach(auto item, slaves_)
@@ -272,7 +272,7 @@ ErrorCode TeamMasterComponent::onInitialize_()
 					.arg(__LINE__)
 					.arg(item->getID()));
 
-                ErrorCode::ec_error;
+                return ErrorCode::ec_error;
             }
 
             item->setDefaultValue(result.value(item->getID()));
@@ -302,7 +302,7 @@ void TeamMasterComponent::onAction(User userid,const QString& trigger,const QJso
     analysisResult(userid,results.value());
 }
 
-void TeamMasterComponent::onTime(User userid,size_t counter)
+void TeamMasterComponent::onTime(User userid,size_t counter, size_t interval)
 {
     if(!actionScript_)
     {
@@ -313,7 +313,7 @@ void TeamMasterComponent::onTime(User userid,size_t counter)
 
         return;
     }
-    auto results = actionScript_->onTime(collectInputs(userid,counter));
+    auto results = actionScript_->onTime(collectInputs(userid,counter,interval));
     if(!results)
     {
         return;
@@ -340,10 +340,8 @@ QJsonObject TeamMasterComponent::collectInputs()
 		if (!pComponent)
 		{
 			LOGFATAL(QStringLiteral("[%1:%2] component:{%3} subscription {%4} is not exist")
-				.arg(__FUNCTION__)
-				.arg(__LINE__)
-				.arg(getID())
-				.arg(item));
+                .arg(__FUNCTION__,__LINE__)
+                .arg(getID(),item));
 
 			return QJsonObject();;
 		}
@@ -354,7 +352,7 @@ QJsonObject TeamMasterComponent::collectInputs()
 	return jo;
 }
 
-QJsonObject TeamMasterComponent::collectInputs(User userid,size_t counter)
+QJsonObject TeamMasterComponent::collectInputs(User userid,size_t counter,size_t interval)
 {
     QJsonObject jo;
 
@@ -365,6 +363,7 @@ QJsonObject TeamMasterComponent::collectInputs(User userid,size_t counter)
         auto userVal = getUserValue_(userid,true);
         jo.insert("_cache", userVal->cache);
         jo.insert("_counter", static_cast<qint64>(counter));
+        jo.insert("_interval", static_cast<qint64>(interval));
 
         auto values = slaveValue_[userid];
 
@@ -401,26 +400,23 @@ QJsonObject TeamMasterComponent::collectInputs(User userid,const QString& trigge
     jo.insert("_userid", static_cast<qint64>(userid.userID));
     jo.insert("_trigger", trigger);
 
-    if (trigger != CommonConst::CalculateDefaultValue)
     {
+        shared_lock<shared_mutex> lock_value(lockValue_);
+        auto userVal = getUserValue_(userid, true);
+        jo.insert("_cache", userVal->cache);
+
+        auto values = slaveValue_[userid];
+
+        foreach(auto item, slaves_)
         {
-            shared_lock<shared_mutex> lock_value(lockValue_);
-            auto userVal = getUserValue_(userid,true);
-            jo.insert("_cache", userVal->cache);
-
-            auto values = slaveValue_[userid];
-
-            foreach(auto item, slaves_)
+            auto slaveValue = values.find(item->getID());
+            if (slaveValue == values.end())
             {
-                auto slaveValue = values.find(item->getID());
-                if(slaveValue == values.end())
-                {
-                    jo.insert(QStringLiteral("%1").arg(item->getID()), item->getDefaultValue());
-                }
-                else
-                {
-                    jo.insert(item->getID(), slaveValue.value());
-                }
+                jo.insert(QStringLiteral("%1").arg(item->getID()), item->getDefaultValue());
+            }
+            else
+            {
+                jo.insert(item->getID(), slaveValue.value());
             }
         }
     }
@@ -462,10 +458,8 @@ void TeamMasterComponent::getRelationParams(User userid,const QString& trigger,Q
         if (!pComponent)
         {
             LOGFATAL(QStringLiteral("[%1:%2] component:{%3} subscription {%4} is not exist")
-                .arg(__FUNCTION__)
-                .arg(__LINE__)
-                .arg(getID())
-                .arg(item));
+                .arg(__FUNCTION__,__LINE__)
+                .arg(getID(),item));
 
             return;
         }
@@ -479,23 +473,29 @@ void TeamMasterComponent::setValue_(User userid,const QJsonObject& value)
     QVector<QPair<QString,QJsonValue>> valueChanged;
     {
         lock_guard<shared_mutex> lock_value(lockValue_);
-        auto& slaveValue = slaveValue_[userid];
-        for(auto itor = value.constBegin();itor != value.constEnd();++itor)
+        auto slaveValueItor = slaveValue_.find(userid);
+        if (slaveValueItor != slaveValue_.end())
         {
-            if(slaves_.contains(itor.key()))
+            for (auto itor = value.constBegin(); itor != value.constEnd(); ++itor)
             {
-                auto val = slaveValue.find(itor.key());
-                if(val == slaveValue.end())
+                if (slaves_.contains(itor.key()))
                 {
-                    slaveValue.insert(itor.key(),itor.value());
-                    valueChanged.push_back(QPair(itor.key(),itor.value()));
-                }
-                else
-                {
-                    if(val.value() != itor.value())
+                    auto val = slaveValueItor.value().find(itor.key());
+                    if (val == slaveValueItor.value().end())
                     {
-                        val.value() = itor.value();
-                        valueChanged.push_back(QPair(itor.key(),itor.value()));
+                        slaveValueItor.value().insert(itor.key(), itor.value());
+                        if (slaves_[itor.key()]->getDefaultValue() != itor.value())
+                        {
+                            valueChanged.push_back(QPair(itor.key(), itor.value()));
+                        }
+                    }
+                    else
+                    {
+                        if (val.value() != itor.value())
+                        {
+                            val.value() = itor.value();
+                            valueChanged.push_back(QPair(itor.key(), itor.value()));
+                        }
                     }
                 }
             }

@@ -73,6 +73,16 @@ DataPackage::~DataPackage()
 
 }
 
+void DataPackage::registerMessageProcessFunction(std::function<void(size_t, const std::string&)> messageProcess)
+{
+    messageProcess_ = messageProcess;
+}
+
+void DataPackage::registerblacklistFunction(std::function<void(size_t)> blackConnect)
+{
+    blacklistFunc_ = blackConnect;
+}
+
 void DataPackage::pushData(size_t connectionId, const uint8_t* pData, size_t dataLength)
 {
     MessageData* pRecData = constructMsgPacket(connectionId, pData, dataLength);

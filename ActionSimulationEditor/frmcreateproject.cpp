@@ -105,6 +105,10 @@ QString frmCreateProject::projectTemplate(const QString& projectName)
 
     jo.insert("categories",category);
 
+    QJsonObject relation;
+    relation.insert("_lists",QJsonArray());
+    jo.insert("relation",relation);
+
     return QJsonDocument(jo).toJson();
 }
 

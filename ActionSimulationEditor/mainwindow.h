@@ -37,6 +37,7 @@ SOFTWARE.
 #include "designcomponent.h"
 #include "categorymanager.h"
 #include "componentmanager.h"
+#include "relationmanager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -49,6 +50,7 @@ enum class ProjectStatus
     modified,           //已更改
 };
 
+class RelationItem;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -85,9 +87,13 @@ public slots:
     void onActionSaveProject();
     //message
     void errorMessage(QString message);
+
+    void selectedRelationChanged(RelationItem* item);
+    void onRelationViewerCloseRequested();
 private:
     void saveLayout_();
     void restoreLayout_();
+    QString loadConfigFile_();
     void saveConfigFile_();
 private:
     void updateMenuStatus();
@@ -99,6 +105,11 @@ private:
 
     ComponentManager* componentManager_;
     ads::CDockWidget* createComponentManagerDockWidget();
+
+    //关系
+    RelationManager* relationManager_;
+    ads::CDockWidget* createRelationManagerDockWidget();
+    ads::CDockWidget* createRelationViewerDockWidget(const RelationItem* item,const QJsonObject& jo);
 
     void createDockingBar();
 
@@ -115,6 +126,7 @@ private:
     QString projectName_;
 
     QJsonObject     json_general_;
+    QJsonObject     json_relation_;
 };
 
 extern MainWindow* g_MainWindow_;

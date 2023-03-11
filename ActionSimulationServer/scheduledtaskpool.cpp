@@ -132,13 +132,13 @@ void ScheduledTaskPool::scheduledTask()
 
                 if (itor->loopValue.empty())
                 {
-                    scheduledEvent_({itor->userid,itor->cid,CommonConst::TimerEvent,QJsonValue(),itor->counter});
+                    scheduledEvent_({itor->userid,itor->cid,CommonConst::TimerEvent,QJsonValue(),itor->counter,itor->interval });
                 }
                 else
                 {
                     if(itor->scheduledType == ScheduledType::Loop)
                     {
-                        scheduledEvent_({itor->userid,itor->cid,CommonConst::LoopEvent,itor->loopValue[itor->counter % itor->loopValue.size()],itor->counter});
+                        scheduledEvent_({itor->userid,itor->cid,CommonConst::LoopEvent,itor->loopValue[itor->counter % itor->loopValue.size()],itor->counter,itor->interval });
                     }
                     else
                     {
@@ -147,7 +147,7 @@ void ScheduledTaskPool::scheduledTask()
                         if(((loopValue[2].toDouble() > 0) && (loopValue[0].toDouble() <= loopValue[1].toDouble())) ||
                             ((loopValue[2].toDouble() < 0) && (loopValue[0].toDouble() >= loopValue[1].toDouble())))
                         {
-                            scheduledEvent_({itor->userid,itor->cid,CommonConst::OrderEvent,loopValue[0],itor->counter});
+                            scheduledEvent_({itor->userid,itor->cid,CommonConst::OrderEvent,loopValue[0],itor->counter,itor->interval });
                         }
                         else
                         {

@@ -40,7 +40,7 @@ public:
     virtual ComponentType getType() const = 0;
     virtual BehaviorType getBehavior() const = 0;
     virtual ErrorCode load(const QString& id,const QJsonObject& jo) = 0;
-    virtual void onTime(User userid,size_t counter) = 0;
+    virtual void onTime(User userid,size_t counter, size_t interval) = 0;
     virtual void onAction(User userid,const QString& trigger,const QJsonValue& value) = 0;
     virtual void onBoardcast(User userid) = 0;
     virtual void onLoop(User userid,const QJsonValue& value) = 0;

@@ -21,7 +21,7 @@ public:
     ~TeamMasterComponent() = default;
 
     ComponentType getType() const override {  return ComponentType::TeamMaster; }
-    BehaviorType getBehavior() const { return BehaviorType::Script; }
+    BehaviorType getBehavior() const override { return BehaviorType::Script; }
 
     ErrorCode start() override;
     void stop() override;
@@ -37,7 +37,7 @@ public:
 
     void onBoardcast(User userid) override;
     void onAction(User userid,const QString& trigger,const QJsonValue& value) override;
-    void onTime(User userid,size_t counter) override;
+    void onTime(User userid,size_t counter, size_t interval) override;
     void onLoop(User /*userid*/,const QJsonValue& /*value*/) override {};
 
     void removeUser(User userid) override;
@@ -62,7 +62,7 @@ private:
     QString getAnswerValue(const QString& slaveI,const QJsonValue& value);
     void setTeam(const QString& team) { team_ = team;}
     QJsonObject collectInputs();
-    QJsonObject collectInputs(User userid,size_t counter);
+    QJsonObject collectInputs(User userid,size_t counter, size_t interval);
     QJsonObject collectInputs(User userid,const QString& trigger,const QJsonValue& value);
 
     std::shared_ptr<UserValue> getUserValue_(Jimmy::User userID,bool create_on_not_exist);

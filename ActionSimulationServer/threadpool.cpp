@@ -95,7 +95,7 @@ void ThreadPool::invokeChain()
 
         if (componentChangeEvent.trigger.compare(CommonConst::TimerEvent)==0)
         {
-            component->onTime(componentChangeEvent.userid,componentChangeEvent.counter);
+            component->onTime(componentChangeEvent.userid,componentChangeEvent.counter,componentChangeEvent.interval);
         }
         else if ((componentChangeEvent.trigger.compare(CommonConst::LoopEvent)==0)
              ||(componentChangeEvent.trigger.compare(CommonConst::OrderEvent)==0))
